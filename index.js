@@ -30,6 +30,14 @@ client.connect(err => {
           res.send(items)
       })
   })
+
+  app.get('/products/:id', (req, res) => {
+    const id = ObjectID(req.params.id);
+    productCollection.find(id)
+    .toArray((err, items) =>{
+        res.send(items[0])
+    })
+})
   
   
   app.post('/addProduct', (req, res) => {
@@ -42,11 +50,13 @@ client.connect(err => {
       })
   })
 
-  app.delete('deleteProduct/:id', (req, res) =>{
+  app.delete('delete/:id', (req, res) =>{
       const id = ObjectID(req.params.id)
-      console.log('delete this', id);
-      productCollection.findOneAndDelete({_id: id})
-      .then(documents => res.send(!!documents.value))
+      productCollection.deleteOne({_id: id})
+      .then(result => {
+        
+      })
+    //   .then(documents => res.send(!!documents.value))
   })
 
   //   client.close();
