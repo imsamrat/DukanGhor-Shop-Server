@@ -50,8 +50,9 @@ client.connect(err => {
       })
   })
 
-  app.delete('/products/:id' ,(req, res) => {
-    productCollection.deleteOne({ _id : ObjectId(req.params.id)})
+  app.delete('/delete/:id' ,(req, res) => {
+    const id = ObjectID(req.params.id);
+    productCollection.deleteOne({_id: id})
     .then(result => {
       res.send(result.deletedCount > 0)
     })
@@ -60,5 +61,25 @@ client.connect(err => {
   //   client.close();
 });
 
+client.connect(err => {
+  console.log('Connection Error', err)
+const orderCollection = client.db("dukanghorShop").collection("orders");
+
+app.post('/newOrder', (req, res) => {
+  const newOrder = req.body;
+  orderCollection.insertOne(newOrder)
+  .then(result => {
+    res.send(result.insertedCount > 0)
+  })
+})
+app.get('/selectOrder', (req, res) => {
+  orderCollection.find({
+    email: req.query.email
+  })
+  .toArray((err, documents) => {
+    res.send(documents)
+  })
+})
+});
 
 app.listen(port)
